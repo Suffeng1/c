@@ -6,5 +6,5 @@ void addCourse();
 void deleteCourse();
 void updateCourse();
 void viewCourses();
-
+void freeCourses();
 #endif

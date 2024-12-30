@@ -5,5 +5,5 @@ void analyzeStatistics();
 void printAllScores(int studentId);
 void calculateAverageScore(int studentId);
 void checkGraduation();
-
+void organizeScores();
 #endif
