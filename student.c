@@ -139,13 +139,16 @@ void addStudent() {
         return;
     }
     fprintf(fp, "%s,%s,%s,%s,%s,%s\n", newStudent->studentID, newStudent->studentName, newStudent->gender, newStudent->birthDate, newStudent->phone, newStudent->email);
+
+    newStudent -> next = studentHead;
+    studentHead = newStudent;
+    printf("学生信息添加成功！\n");
     fclose(fp);
 
-    // 释放内存
-    free(newStudent);
 }
 
 void deleteStudent() {
+
     char studentID[20];
     printf("请输入要删除的学生学号: ");
     scanf("%s", studentID);
@@ -179,6 +182,7 @@ void deleteStudent() {
 }
 
 void updateStudent() {
+
     char studentID[20];
     printf("请输入要修改的学生学号: ");
     scanf("%s", studentID);
@@ -210,6 +214,7 @@ void updateStudent() {
             printf("学生信息修改成功！\n");
             free(newContent);
             return;
+        curr = curr->next;
         }
     }
     printf("没有找到要修改的学生信息！\n");
@@ -217,6 +222,7 @@ void updateStudent() {
 }
 
 void viewStudents() {
+
     char studentID[20];
     printf("请输入要查看的学生学号: ");
     scanf("%s", studentID);
