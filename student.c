@@ -15,9 +15,10 @@ typedef struct Student {
     char phone[20];      // 电话
     char email[100];     // E-mail
     struct Student* next;// 指向下一个学生信息的指针
+    struct Score* last; // 指向最后一个成绩信息的指针
 } Student;
 
-Student* head = NULL; // 指向学生信息链表的头指针
+Student* studentHead = NULL; // 指向学生信息链表的头指针
 
 void manageStudent() {
     freeStudentList();
@@ -58,7 +59,7 @@ void manageStudent() {
 
 void loadStudentsFromFile(const char* filename) {
     freeStudentList();
-    // if (head == NULL) {
+    // if (studentHead == NULL) {
     // printf("链表已清空！\n");
     // }
 
@@ -81,8 +82,8 @@ void loadStudentsFromFile(const char* filename) {
         sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%s",student->studentID,student->studentName,student->gender,student->birthDate,student->phone,student->email);
 
         //插入到链表头
-        student->next = head;
-        head = student;
+        student->next = studentHead;
+        studentHead = student;
 
     }
     fclose(fp);
@@ -90,17 +91,17 @@ void loadStudentsFromFile(const char* filename) {
 }
 
 void freeStudentList(){
-    Student* curr = head;
+    Student* curr = studentHead;
     while (curr != NULL){
         Student* temp = curr;
         curr = curr->next;
         free(temp);
     }
-    head = NULL;
+    studentHead = NULL;
 }
 
 void printStudentList() {
-    Student* curr = head;
+    Student* curr = studentHead;
     while (curr != NULL) {
         printf("学号: %s, 姓名: %s, 性别: %s, 出生日期: %s, 电话: %s, 邮箱: %s\n",
                curr->studentID, curr->studentName, curr->gender, curr->birthDate, curr->phone, curr->email);
@@ -151,13 +152,13 @@ void deleteStudent() {
 
     // 遍历链表，找到要删除的学生信息
     Student* prev = NULL;
-    Student* curr = head;
+    Student* curr = studentHead;
     while (curr!= NULL) {
         if (strcmp(curr->studentID, studentID) == 0) {
             // 找到了要删除的学生信息
             if (prev == NULL) {
                 // 要删除的学生信息是链表头部
-                head = curr->next;
+                studentHead = curr->next;
             } else {
                 // 要删除的学生信息不是链表头部
                 prev->next = curr->next;
@@ -183,7 +184,7 @@ void updateStudent() {
     scanf("%s", studentID);
 
     // 遍历链表，找到要修改的学生信息
-    Student* curr = head;
+    Student* curr = studentHead;
     while (curr!= NULL) {
         if (strcmp(curr->studentID, studentID) == 0) {
             printf("请输入新的学生信息:\n");
@@ -221,7 +222,7 @@ void viewStudents() {
     scanf("%s", studentID);
 
     // 遍历链表，找到要查看的学生信息
-    Student* curr = head;
+    Student* curr = studentHead;
     while (curr != NULL) {
         if (strcmp(curr->studentID, studentID) == 0) {
             printf("学号: %s\n", curr->studentID);

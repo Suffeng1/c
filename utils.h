@@ -6,4 +6,5 @@ void pause();
 void removeContent();
 void editContent();
 char* createContent();
+void organizeScore();
 #endif

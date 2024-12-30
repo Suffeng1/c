@@ -11,3 +11,20 @@ typedef struct Score{
     char studentName[20];//学生姓名
     char score[5];//成绩
 }Score;
+
+void manageScore(){
+    loadScoresFromFile();
+
+}
+void addScore(){
+    loadStudentsFromFile();
+
+
+
+
+
+
+}
+void deleteScore();
+void updateScore();
+void viewScores();

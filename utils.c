@@ -13,6 +13,7 @@ typedef struct Student {
     char phone[20];      // 电话
     char email[100];     // E-mail
     struct Student* next;// 指向下一个学生信息的指针
+    struct Score* last;// 指向最后一个成绩信息的指针
 } Student;
 
 typedef struct Score{
@@ -203,4 +204,9 @@ char* createContent(Student* student,Score* score,Course* course){
 
     return newContent;
 
+}
+
+void organizeScores(score* scoreHead){
+    score* current = scoreHead;
+    while (current)
 }
