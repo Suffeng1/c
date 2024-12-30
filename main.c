@@ -18,8 +18,8 @@ int main() {
 
         switch (choice) {
             case 1: manageStudent(); break;
-            // case 2: manageCourse(); break;
-            // case 3: manageScore(); break;
+            case 2: manageCourse(); break;
+            case 3: manageScore(); break;
             // case 4: analyzeStatistics(); break;
             // case 5: checkGraduation(); break;
             case 6: printf("退出系统。\n"); break;

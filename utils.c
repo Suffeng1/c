@@ -206,7 +206,4 @@ char* createContent(Student* student,Score* score,Course* course){
 
 }
 
-void organizeScores(score* scoreHead){
-    score* current = scoreHead;
-    while (current)
-}
+
