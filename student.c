@@ -4,26 +4,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "globals.h"
 #include "utils.h"
+
 #include "student.h"
 
-typedef struct Student {
-    char studentID[20]; // 学号
-    char studentName[100];      // 姓名
-    char gender[10];     // 性别
-    char birthDate[20]; // 出生年月
-    char phone[20];      // 电话
-    char email[100];     // E-mail
-    struct Student* next;// 指向下一个学生信息的指针
-    struct Score* last; // 指向最后一个成绩信息的指针
-} Student;
 
-Student* studentHead = NULL; // 指向学生信息链表的头指针
 
 void manageStudent() {
     freeStudentList();
     loadStudentsFromFile("students.txt");
-    // printStudentList();
+
     int choice;
     do {
         printf("学生信息管理系统\n");
@@ -59,9 +50,9 @@ void manageStudent() {
 
 void loadStudentsFromFile(const char* filename) {
     freeStudentList();
-    // if (studentHead == NULL) {
-    // printf("链表已清空！\n");
-    // }
+
+
+
 
     FILE* fp = fopen(filename, "r");
     if (fp == NULL) {
@@ -71,7 +62,7 @@ void loadStudentsFromFile(const char* filename) {
 
     char line[1024];
     while (fgets(line,sizeof(line),fp)){
-        // printf("读取的行内容: %s\n", line);
+
 
         Student* student = (Student*)malloc(sizeof(Student));
         if (student == NULL) {
@@ -172,7 +163,7 @@ void deleteStudent() {
             printf("学生信息删除成功！\n");
 
             // 释放内存
-            free(curr);
+
             return;
         }
         prev = curr;
@@ -214,8 +205,10 @@ void updateStudent() {
             printf("学生信息修改成功！\n");
             free(newContent);
             return;
-        curr = curr->next;
+
         }
+
+        curr = curr->next;
     }
     printf("没有找到要修改的学生信息！\n");
 
@@ -242,5 +235,5 @@ void viewStudents() {
         curr = curr->next;
     }
     printf("没有找到要查看的学生信息！\n");
-    free(curr);
+
 }

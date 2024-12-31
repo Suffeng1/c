@@ -7,4 +7,6 @@ void removeContent();
 void editContent();
 char* createContent();
 void organizeScore();
+void removeContentForTwoFields();
+void editContentForTwoFields();
 #endif

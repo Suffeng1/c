@@ -3,32 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "globals.h"
 #include "utils.h"
 
-typedef struct Student {
-    char studentID[20]; // 学号
-    char studentName[100];      // 姓名
-    char gender[10];     // 性别
-    char birthDate[20]; // 出生年月
-    char phone[20];      // 电话
-    char email[100];     // E-mail
-    struct Student* next;// 指向下一个学生信息的指针
-    struct Score* last;// 指向最后一个成绩信息的指针
-} Student;
 
-typedef struct Score{
-    char courseID[10];//课程号
-    char studentID[10];//学生学号
-    char studentName[20];//学生姓名
-    char score[5];//成绩
-}Score;
-
-typedef struct Course{
-    char courseID[10];//课程号
-    char courseName[50];//课程名称
-    char credit[10];//学分
-    char courseType[20];//课程类型
-}Course;
 
 //ui操作
 void clearScreen() {
@@ -101,6 +79,65 @@ void removeContent(const char* filename,const char* contentToRemove) {
     free(buffer);
 }
 
+void removeContentForTwoFields(const char* filename, const char* field1, const char* field2) {
+    // 打开原文件
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("无法打开文件：%s\n", filename);
+        return;
+    }
+
+    // 创建临时文件
+    FILE* tempfile = tmpfile();
+    if (tempfile == NULL) {
+        printf("创建临时文件失败！\n");
+        fclose(fp);
+        return;
+    }
+
+    char line[1024];
+
+    // 逐行读取文件内容并检查字段匹配
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        char fileField1[50], fileField2[50], fileField3[50], fileField4[50];
+
+        // 假设文件的每一行格式为: field1,field2,field3,field4
+        sscanf(line, "%[^,],%[^,],%[^,],%s", fileField1, fileField2, fileField3, fileField4);
+
+        // 检查字段匹配
+        int match1 = (field1 != NULL) && (strcmp(fileField1, field1) == 0);
+        int match2 = (field2 != NULL) && (strcmp(fileField2, field2) == 0);
+
+        // 如果字段匹配，则跳过写入临时文件
+        if (!(match1 && (field2 == NULL || match2))) {
+            fputs(line, tempfile);
+        }
+    }
+
+    // 关闭原文件
+    fclose(fp);
+
+    // 重新打开原文件用于写入，并清空内容
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
+        printf("无法重新打开文件：%s\n", filename);
+        fclose(tempfile);
+        return;
+    }
+
+    // 将临时文件的内容写回原文件
+    rewind(tempfile);
+    while (fgets(line, sizeof(line), tempfile) != NULL) {
+        fputs(line, fp);
+    }
+
+    // 关闭临时文件和原文件
+    fclose(tempfile);
+    fclose(fp);
+
+    printf("内容删除成功！\n");
+}
+
 void editContent(const char* filename, const char* id, const char* newContent) {
     //打开文件
     FILE* fp = fopen(filename, "r");
@@ -136,6 +173,7 @@ void editContent(const char* filename, const char* id, const char* newContent) {
             fputs(buffer, tempfile);
         }else{
             fputs(newContent, tempfile);
+            fputs("\n",tempfile);
         }
     }
     //关闭文件
@@ -159,6 +197,68 @@ void editContent(const char* filename, const char* id, const char* newContent) {
     fclose(fp);
     //释放内存
     free(buffer);
+}
+
+void editContentForTwoFields(const char* filename, const char* field1, const char* field2, const char* newContent) {
+    // 打开原文件
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("无法打开文件：%s\n", filename);
+        return;
+    }
+
+    // 创建临时文件
+    FILE* tempfile = tmpfile();
+    if (tempfile == NULL) {
+        printf("创建临时文件失败！\n");
+        fclose(fp);
+        return;
+    }
+
+    char line[22];
+
+    // 逐行读取文件内容
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        char fileField1[50], fileField2[50], fileField3[50], fileField4[50];
+
+        // 假设文件的每一行格式为: field1,field2,field3,field4
+        sscanf(line, "%[^,],%[^,],%[^,],%s", fileField1, fileField2, fileField3, fileField4);
+
+        // 检查字段匹配
+        int match1 = (field1 != NULL) && (strcmp(fileField1, field1) == 0);
+        int match2 = (field2 != NULL) && (strcmp(fileField2, field2) == 0);
+
+        // 如果匹配，则替换为新内容；否则写回原内容
+        if (match1 && (field2 == NULL || match2)) {
+            fputs(newContent, tempfile);
+            fputs("\n", tempfile);
+        } else {
+            fputs(line, tempfile);
+        }
+    }
+
+    // 关闭原文件
+    fclose(fp);
+
+    // 重新打开原文件用于写入，并清空内容
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
+        printf("无法重新打开文件：%s\n", filename);
+        fclose(tempfile);
+        return;
+    }
+
+    // 将临时文件的内容写回原文件
+    rewind(tempfile);
+    while (fgets(line, sizeof(line), tempfile) != NULL) {
+        fputs(line, fp);
+    }
+
+    // 关闭临时文件和原文件
+    fclose(tempfile);
+    fclose(fp);
+
+    printf("内容编辑成功！\n");
 }
 
 char* createContent(Student* student,Score* score,Course* course){
@@ -186,15 +286,15 @@ char* createContent(Student* student,Score* score,Course* course){
     switch (structType){
         case 0:
             //生成学生信息
-            sprintf(newContent, "%s,%s,%s,%s,%s,%s",student->studentID,student->studentName,student->gender,student->birthDate,student->phone,student->email);
+            sprintf(newContent, "%s,%s,%s,%s,%s,%s\n",student->studentID,student->studentName,student->gender,student->birthDate,student->phone,student->email);
             break;
         case 1:
             //生成成绩信息
-            sprintf(newContent, "%s,%s,%s,%s",score->courseID,score->studentID,score->studentName,score->score);
+            sprintf(newContent, "%s,%s,%s,%s\n",score->courseID,score->studentID,score->studentName,score->score);
             break;
         case 2:
             //生成课程信息
-            sprintf(newContent, "%s,%s,%s,%s",course->courseID,course->courseName,course->credit,course->courseType);
+            sprintf(newContent, "%s,%s,%s,%s\n",course->courseID,course->courseName,course->credit,course->courseType);
             break;
         default:
             printf("未知结构体类型！\n");

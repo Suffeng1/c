@@ -2,10 +2,10 @@
 CC = gcc
 
 # 定义编译选项
-CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99
+CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g
 
 # 源文件和目标文件
-SRCS = main.c student.c course.c score.c utils.c
+SRCS = main.c student.c course.c score.c utils.c statistics.c globals.c
 OBJS = $(SRCS:.c=.o)
 
 # 可执行文件名
@@ -26,8 +26,11 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(OBJS) $(TARGET)
 
+
+
+
+debug: $(TARGET)
+	gdb $(TARGET)
+
 # 伪目标
 .PHONY: all clean
-
-
-
